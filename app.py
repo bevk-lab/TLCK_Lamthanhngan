@@ -117,20 +117,22 @@ with tab1:
         st.info(f"💡 **Phân tích tương quan Tấn công vs Tốc độ:** Điểm Tấn công trung bình đạt **{avg_atk:.1f}** và Tốc độ trung bình đạt **{avg_spd:.1f}**. Quan sát biểu đồ phân tán cho thấy nhóm Pokemon có Tấn công > 100 đa phần tập trung ở các hệ Dragon, Fighting, Steel, đòi hỏi nhà thiết kế game cân đối lại chỉ số Tốc độ để tránh tạo ra các nhân vật 'toàn diện' quá mức.")
 
 # ==========================================
-# TAB 2: TƯƠNG QUAN & PHÂN BỔ CHỈ SỐ
+# TAB 2: TƯƠNG QUAN & PHÂN BỔ CHỈ SỐ (Đã fix lỗi Styler)
 # ==========================================
 with tab2:
     st.subheader("🔥 Ma trận Tương quan Pearson giữa các Chiều Dữ liệu Sức mạnh")
     stats_cols = ['hp', 'attack', 'defense', 'special_attack', 'special_defense', 'speed', 'total']
     available_cols = [c for c in stats_cols if c in filtered_df.columns]
     
-    corr_df = filtered_df[available_cols].corr()
-    st.dataframe(corr_df.style.background_gradient(cmap="Blues"), use_container_width=True)
+    # Tính ma trận tương quan và làm tròn 2 chữ số thập phân
+    corr_df = filtered_df[available_cols].corr().round(2)
+    
+    # Hiển thị bằng bảng Streamlit chuẩn (Tránh lỗi ImportError/ModuleNotFoundError của Pandas Styler)
+    st.dataframe(corr_df, use_container_width=True)
     
     # Phân tích phía dưới bảng ma trận tương quan
     high_corr_val = corr_df.loc['special_attack', 'total'] if 'special_attack' in corr_df.columns else 0.8
     st.info(f"💡 **Phân tích ma trận tương quan:** Chỉ số **Special Attack** có hệ số tương quan cao nhất với Tổng điểm (`total`) đạt mức **{high_corr_val:.2f}**. Điều này chỉ ra rằng trong cấu trúc dữ liệu hiện tại, các Pokemon sở hữu đòn Tấn công Đặc biệt cao thường quyết định trực tiếp đến tổng chỉ số sức mạnh vượt trội của nhân vật.")
-
 # ==========================================
 # TAB 3: BENCHMARK HIỆU NĂNG BIG DATA
 # ==========================================
